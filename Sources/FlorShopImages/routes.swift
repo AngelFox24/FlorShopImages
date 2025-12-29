@@ -2,13 +2,12 @@ import Fluent
 import Vapor
 
 func routes(_ app: Application) throws {
-    app.get { req async in
-        "It works!"
+    guard let imagesPath = Environment.get("IMAGES_PATH") else {
+        fatalError("Missing IMAGES_PATH in configuration in .env\(app.environment)")
     }
-
-    app.get("hello") { req async -> String in
-        "Hello, world!"
+    guard let serverPath = Environment.get("SERVER_PATH") else {
+        fatalError("Missing SERVER_PATH in configuration in .env\(app.environment)")
     }
-
-    try app.register(collection: TodoController())
+    let imageService = ImageService(basePath: imagesPath, baseDomain: serverPath)
+    try app.register(collection: ImageController(imageService: imageService))
 }
