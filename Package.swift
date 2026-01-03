@@ -16,7 +16,7 @@ let package = Package(
         // 🔵 Non-blocking, event-driven networking for Swift. Used for custom executors
         .package(url: "https://github.com/apple/swift-nio.git", from: "2.65.0"),
         // 🔵 Shared DTOs
-        .package(url: "https://github.com/AngelFox24/florshop-dtos", exact: "1.0.10"),
+        .package(url: "https://github.com/AngelFox24/florshop-dtos", exact: "1.0.17"),
 //                .package(path: "../florshop-dtos")
     ],
     targets: [
