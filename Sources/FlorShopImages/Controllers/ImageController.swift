@@ -11,6 +11,7 @@ struct ImageController: RouteCollection {
         let test = imageUrl.grouped("test")
         test.get(use: self.test)
     }
+    //GET: /image/test
     @Sendable
     func test(req: Request) async throws -> Response {
         return .init(status: .ok, body: .init(stringLiteral: "Test OK"))
@@ -21,14 +22,14 @@ struct ImageController: RouteCollection {
         guard let imageCic = try? req.query.get(String.self, at: "cic") else {
             throw Abort(.badRequest, reason: "No image ID provided")
         }
-        guard let imageId = UUID(uuidString: imageCic) else {
-            throw Abort(.badRequest, reason: "El id es invalido")
+        guard let imageEntity = try await Image.findImage(imageCic: imageCic, on: req.db) else {
+            throw Abort(.notFound, reason: "Image not found")
         }
-        guard imageService.fileExists(id: imageId) else {
+        guard imageService.fileExists(imageCic: imageEntity.imageCic) else {
             throw Abort(.notFound, reason: "Image not found")
         }
         // Ruta donde se almacenan las imágenes en el servidor
-        let imageDirectory: String = imageService.getPathById(id: imageId)
+        let imageDirectory: String = imageService.getPathById(imageCic: imageEntity.imageCic)
         // Crear la respuesta con el contenido de la imagen
         return try await req.fileio.asyncStreamFile(at: imageDirectory)
     }
