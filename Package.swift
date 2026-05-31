@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "FlorShopImages",
     platforms: [
-       .macOS(.v13)
+       .macOS(.v15)
     ],
     dependencies: [
         // 💧 A server-side Swift web framework.
@@ -16,8 +16,8 @@ let package = Package(
         // 🔵 Non-blocking, event-driven networking for Swift. Used for custom executors
         .package(url: "https://github.com/apple/swift-nio.git", from: "2.65.0"),
         // 🔵 Shared DTOs
-        .package(url: "https://github.com/AngelFox24/florshop-dtos", exact: "1.0.17"),
-//                .package(path: "../florshop-dtos")
+//        .package(url: "https://github.com/AngelFox24/florshop-dtos.git", exact: "1.0.30"),
+        .package(path: "../florshop-dtos")
     ],
     targets: [
         .executableTarget(
