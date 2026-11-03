@@ -5,13 +5,16 @@ struct ImageController: RouteCollection {
     let imageService: ImageService
     func boot(routes: any RoutesBuilder) throws {
         let imageUrl = routes.grouped("image")
-        imageUrl.get(use: self.serveImage)
+        // GET /image/{cic}
+        imageUrl.get(":cic", use: self.serveImage)
+
+        // POST /image
         imageUrl.post(use: self.saveImage)
     }
-    //GET: /image?cic=78afs8fs8778saf78
+    //GET: /image/9721803D-BA02-4278-9236-53CFC93CA7BB
     @Sendable
     func serveImage(req: Request) async throws -> Response {
-        guard let imageCic = try? req.query.get(String.self, at: "cic") else {
+        guard let imageCic = req.parameters.get("cic") else {
             throw Abort(.badRequest, reason: "No image ID provided")
         }
         guard let imageEntity = try await Image.findImage(imageCic: imageCic, on: req.db) else {
@@ -32,8 +35,7 @@ struct ImageController: RouteCollection {
         // Buscar por hash (deduplicación)
         let hash = imageUrlDto.imageData.sha256String()
         if let existing = try await imageService.getImageUrlByHash(hash: hash, db: req.db) {
-            let imageUrl: String = imageService.baseDomain + "/image?cic=" + existing.imageCic
-            print(imageUrl)
+            let imageUrl: String = imageService.baseDomain + "/image/" + existing.imageCic
             return ImageOutputDTO(imageURL: imageUrl)
         }
         //Create a new image cic identifier
@@ -48,7 +50,7 @@ struct ImageController: RouteCollection {
             }
         }
         
-        let imageUrl = imageService.baseDomain + "/image?cic=" + newImageCic
+        let imageUrl = imageService.baseDomain + "/image/" + newImageCic
         let imageNew = Image(
             imageCic: newImageCic,
             imageHash: hash,
