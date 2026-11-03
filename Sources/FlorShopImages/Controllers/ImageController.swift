@@ -7,13 +7,6 @@ struct ImageController: RouteCollection {
         let imageUrl = routes.grouped("image")
         imageUrl.get(use: self.serveImage)
         imageUrl.post(use: self.saveImage)
-        let test = imageUrl.grouped("test")
-        test.get(use: self.test)
-    }
-    //GET: /image/test
-    @Sendable
-    func test(req: Request) async throws -> Response {
-        return .init(status: .ok, body: .init(stringLiteral: "Test OK"))
     }
     //GET: /image?cic=78afs8fs8778saf78
     @Sendable
@@ -39,7 +32,9 @@ struct ImageController: RouteCollection {
         // Buscar por hash (deduplicación)
         let hash = imageUrlDto.imageData.sha256String()
         if let existing = try await imageService.getImageUrlByHash(hash: hash, db: req.db) {
-            return ImageOutputDTO(imageURL: existing.imageUrl)
+            let imageUrl: String = imageService.baseDomain + "/image?cic=" + existing.imageCic
+            print(imageUrl)
+            return ImageOutputDTO(imageURL: imageUrl)
         }
         //Create a new image cic identifier
         let newImageCic = UUID().uuidString
@@ -56,11 +51,10 @@ struct ImageController: RouteCollection {
         let imageUrl = imageService.baseDomain + "/image?cic=" + newImageCic
         let imageNew = Image(
             imageCic: newImageCic,
-            imageUrl: imageUrl,
             imageHash: hash,
         )
         try await imageNew.save(on: req.db)
-        return ImageOutputDTO(imageURL: imageNew.imageUrl)
+        return ImageOutputDTO(imageURL: imageUrl)
     }
 }
 

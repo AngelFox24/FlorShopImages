@@ -9,7 +9,6 @@ enum TypeOfCreation {
 struct ImageService {
     let basePath: String
     let baseDomain: String
-    
 
     // MARK: - Métodos privados
     
@@ -52,11 +51,6 @@ struct ImageService {
     func getImageUrlByHash(hash: String, db: any Database) async throws -> Image? {
         return try await Image.query(on: db)
             .filter(\.$imageHash == hash)
-            .first()
-    }
-    func getImageUrlByUrl(url: String, db: any Database) async throws -> Image? {
-        return try await Image.query(on: db)
-            .filter(\.$imageUrl == url)
             .first()
     }
 }

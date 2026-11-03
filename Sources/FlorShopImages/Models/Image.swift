@@ -8,7 +8,7 @@ final class Image: Model, @unchecked Sendable {
     @ID(key: .id) var id: UUID?
     
     @Field(key: "image_cic") var imageCic: String
-    @Field(key: "imageUrl") var imageUrl: String
+//    @Field(key: "imageUrl") var imageUrl: String
     @Field(key: "imageHash") var imageHash: String
     
     //MARK: Timestamps
@@ -19,11 +19,11 @@ final class Image: Model, @unchecked Sendable {
     
     init(
         imageCic: String,
-        imageUrl: String,
+//        imageUrl: String,
         imageHash: String
     ) {
         self.imageCic = imageCic
-        self.imageUrl = imageUrl
+//        self.imageUrl = imageUrl
         self.imageHash = imageHash
     }
 }
