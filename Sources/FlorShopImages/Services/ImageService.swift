@@ -1,6 +1,5 @@
 import Vapor
 import Fluent
-import FlorShopDTOs
 
 enum TypeOfCreation {
     case createByURL(url: String, hash: String)

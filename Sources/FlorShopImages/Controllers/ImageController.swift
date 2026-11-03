@@ -1,6 +1,5 @@
 import Fluent
 import Vapor
-import FlorShopDTOs
 
 struct ImageController: RouteCollection {
     let imageService: ImageService
@@ -35,12 +34,12 @@ struct ImageController: RouteCollection {
     }
     //POST: /image
     @Sendable
-    func saveImage(req: Request) async throws -> ImageClientDTO {
-        let imageUrlDto = try req.content.decode(ImageServerDTO.self)
+    func saveImage(req: Request) async throws -> ImageOutputDTO {
+        let imageUrlDto = try req.content.decode(ImageInputDTO.self)
         // Buscar por hash (deduplicación)
         let hash = imageUrlDto.imageData.sha256String()
         if let existing = try await imageService.getImageUrlByHash(hash: hash, db: req.db) {
-            return ImageClientDTO(imageURL: existing.imageUrl)
+            return ImageOutputDTO(imageURL: existing.imageUrl)
         }
         //Create a new image cic identifier
         let newImageCic = UUID().uuidString
@@ -61,7 +60,7 @@ struct ImageController: RouteCollection {
             imageHash: hash,
         )
         try await imageNew.save(on: req.db)
-        return ImageClientDTO(imageURL: imageNew.imageUrl)
+        return ImageOutputDTO(imageURL: imageNew.imageUrl)
     }
 }
 
